@@ -29,6 +29,12 @@ var playState = {
 
     this.createWorld();
     game.time.events.loop(2200, this.addEnemy, this);
+
+    this.emitter = game.add.emitter(0, 0, 15);
+    this.emitter.makeParticles('pixel');
+    this.emitter.setYSpeed(-150, 150);
+    this.emitter.setXSpeed(-150, 150);
+    this.emitter.gravity = 0;
   },
 
   update: function() {
@@ -139,8 +145,22 @@ var playState = {
   },
 
   playerDie: function() {
+    if (!this.player.alive) {
+      return;
+    }
+    
+    this.player.kill();
+
     this.deadSound.play();
 
+    this.emitter.x = this.player.x;
+    this.emitter.y = this.player.y;
+    this.emitter.start(true, 600, null, 15);
+
+    game.time.events.add(1000, this.startMenu, this);
+  },
+
+  startMenu: function() {
     game.state.start('menu');
   }
 };
