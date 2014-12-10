@@ -2,6 +2,12 @@ var playState = {
 
   create: function() {
     this.cursor = game.input.keyboard.createCursorKeys();
+    game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT]);
+    this.wasd = {
+      up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+      left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+      right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+    };
 
     this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
     this.player.anchor.setTo(0.5, 0.5);
@@ -60,11 +66,11 @@ var playState = {
   },
 
   movePlayer: function() {
-    if (this.cursor.left.isDown) {
+    if (this.cursor.left.isDown || this.wasd.left.isDown) {
       this.player.body.velocity.x = -200;
       this.player.animations.play('left');
     }
-    else if (this.cursor.right.isDown) {
+    else if (this.cursor.right.isDown || this.wasd.right.isDown) {
       this.player.body.velocity.x = 200;
       this.player.animations.play('right');
     }
@@ -73,7 +79,7 @@ var playState = {
       this.player.frame = 0;
     }
 
-    if (this.cursor.up.isDown && this.player.body.touching.down) {
+    if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.player.body.touching.down) {
       this.jumpSound.play();
       this.player.body.velocity.y = -320;
     }
