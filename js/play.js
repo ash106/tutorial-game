@@ -21,6 +21,10 @@ var playState = {
 
     game.global.score = 0;
 
+    this.jumpSound = game.add.audio('jump');
+    this.coinSound = game.add.audio('coin');
+    this.deadSound = game.add.audio('dead');
+
     this.createWorld();
     game.time.events.loop(2200, this.addEnemy, this);
   },
@@ -50,11 +54,14 @@ var playState = {
     }
 
     if (this.cursor.up.isDown && this.player.body.touching.down) {
+      this.jumpSound.play();
       this.player.body.velocity.y = -320;
     }
   },
 
   takeCoin: function(player, coin) {
+    this.coinSound.play();
+
     game.global.score += 5;
     this.scoreLabel.text = 'score: ' + game.global.score;
 
@@ -121,6 +128,8 @@ var playState = {
   },
 
   playerDie: function() {
+    this.deadSound.play();
+
     game.state.start('menu');
   }
 };
