@@ -28,7 +28,7 @@ var playState = {
     this.deadSound = game.add.audio('dead');
 
     this.createWorld();
-    game.time.events.loop(2200, this.addEnemy, this);
+    this.nextEnemy = 0;
 
     this.emitter = game.add.emitter(0, 0, 15);
     this.emitter.makeParticles('pixel');
@@ -47,6 +47,15 @@ var playState = {
 
     if (!this.player.inWorld) {
       this.playerDie();
+    }
+
+    if (this.nextEnemy < game.time.now) {
+      var start = 4000, end = 1000, score = 100;
+
+      var delay = Math.max(start - (start-end)*game.global.score/score, end);
+
+      this.addEnemy();
+      this.nextEnemy = game.time.now + delay;
     }
   },
 
@@ -148,7 +157,7 @@ var playState = {
     if (!this.player.alive) {
       return;
     }
-    
+
     this.player.kill();
 
     this.deadSound.play();
