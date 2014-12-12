@@ -9,6 +9,10 @@ var playState = {
       right: game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
 
+    if (!game.device.desktop) {
+      this.addMobileInputs();
+    }
+
     this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
     this.player.anchor.setTo(0.5, 0.5);
     this.player.animations.add('right', [1, 2], 8, true);
@@ -66,11 +70,12 @@ var playState = {
   },
 
   movePlayer: function() {
-    if (this.cursor.left.isDown || this.wasd.left.isDown) {
+    // console.log(this.moveLeft + " " + this.moveRight);
+    if (this.cursor.left.isDown || this.wasd.left.isDown || this.moveLeft) {
       this.player.body.velocity.x = -200;
       this.player.animations.play('left');
     }
-    else if (this.cursor.right.isDown || this.wasd.right.isDown) {
+    else if (this.cursor.right.isDown || this.wasd.right.isDown || this.moveRight) {
       this.player.body.velocity.x = 200;
       this.player.animations.play('right');
     }
@@ -79,9 +84,8 @@ var playState = {
       this.player.frame = 0;
     }
 
-    if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.player.body.onFloor()) {
-      this.jumpSound.play();
-      this.player.body.velocity.y = -320;
+    if (this.cursor.up.isDown || this.wasd.up.isDown) {
+      this.jumpPlayer();
     }
   },
 
@@ -160,5 +164,38 @@ var playState = {
 
   startMenu: function() {
     game.state.start('menu');
+  },
+
+  addMobileInputs: function() {
+    this.jumpButton = game.add.sprite(350, 247, 'jumpButton');
+    this.jumpButton.inputEnabled = true;
+    this.jumpButton.events.onInputDown.add(this.jumpPlayer, this);
+    this.jumpButton.alpha = 0.5;
+    
+    this.moveLeft = false;
+    this.moveRight = false;
+
+    this.leftButton = game.add.sprite(50, 247, 'leftButton');
+    this.leftButton.inputEnabled = true;
+    this.leftButton.events.onInputOver.add(function(){this.moveLeft=true;}, this);
+    this.leftButton.events.onInputOut.add(function(){this.moveLeft=false;}, this);
+    this.leftButton.events.onInputDown.add(function(){this.moveLeft=true;}, this);
+    this.leftButton.events.onInputUp.add(function(){this.moveLeft=false;}, this);
+    this.leftButton.alpha = 0.5;
+
+    this.rightButton = game.add.sprite(130, 247, 'rightButton');
+    this.rightButton.inputEnabled = true;
+    this.rightButton.events.onInputOver.add(function(){this.moveRight=true;}, this);
+    this.rightButton.events.onInputOut.add(function(){this.moveRight=false;}, this);
+    this.rightButton.events.onInputDown.add(function(){this.moveRight=true;}, this);
+    this.rightButton.events.onInputUp.add(function(){this.moveRight=false;}, this);
+    this.rightButton.alpha = 0.5;
+  },
+
+  jumpPlayer: function() {
+    if (this.player.body.onFloor()) {
+      this.jumpSound.play();
+      this.player.body.velocity.y = -320;
+    }
   }
 };

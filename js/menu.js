@@ -19,7 +19,13 @@ var menuState = {
     var scoreLabel = game.add.text(game.world.centerX, game.world.centerY, text, { font: '25px Arial', fill: '#ffffff', align: 'center' });
     scoreLabel.anchor.setTo(0.5, 0.5);
 
-    var startLabel = game.add.text(game.world.centerX, game.world.height-80, 'press the up arrow key to start', { font: '25px Arial', fill: '#ffffff' });
+    if (game.device.desktop) {
+      var text = 'press the up arrow key to start';
+    } 
+    else {
+      var text = 'touch the screen to start';
+    }
+    var startLabel = game.add.text(game.world.centerX, game.world.height-80, text, { font: '25px Arial', fill: '#ffffff' });
     startLabel.anchor.setTo(0.5, 0.5);
     game.add.tween(startLabel).to({angle: -2}, 500).to({angle: 2}, 500).loop().start();
 
@@ -30,8 +36,8 @@ var menuState = {
     }
 
     var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-
     upKey.onDown.addOnce(this.start, this);
+    game.input.onDown.addOnce(this.start, this);
   },
 
   start: function() {
